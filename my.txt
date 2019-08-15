@@ -1,0 +1,77 @@
+
+//mongoosejs for more
+
+// ===before steps==
+// create database
+//cpmand prompt (npm init)
+// create .gitignore file add (node_modules/) bcz we dont want nodemodule when we put project on git hub
+// create this server.js file
+//npm install --save express
+	// npm install --save mongoose
+	// npm install --save body-parser
+	// npm install --save morgan
+    // npm install --save cors copy all comand in comand pronpt
+    // follow bellow things
+//===step1==
+var mongoose = require('mongoose');
+var express = require('express');
+var bodyParser = require('body-parser');
+var logger = require('morgan');
+var cors = require('cors');
+
+var Project = require('./project-model');//after step-9 add it
+
+//===step6==
+//setup database connection 
+// ==step-8==== change link and add password in connectionString
+var connectionString = 'mongodb://apiuser:api1234@cluster0-shard-00-00-yyqmt.mongodb.net:27017,cluster0-shard-00-01-yyqmt.mongodb.net:27017,cluster0-shard-00-02-yyqmt.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority';
+mongoose.connect(connectionString,{ useNewUrlParser: true });
+var  db = mongoose.connection;
+db.once('open', () => console.log('Database connected'));
+db.on('error', () => console.log('Database error'));
+
+
+// ===step-7==
+//go to dtabase connect username=apiuser pwd=api1234 create mongoes db, connect application change version=2.2.12 or later and go step 8
+
+// ===step-9==
+//create project-model.js
+
+
+//===step2==
+//setup express server(we want to go like localhost/user,localhost/login etc for that)
+var app = express();//http: server
+app.use(cors());//connect to diffrent domain
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(logger('dev'));
+
+//===step5==
+//setup routes
+var router = express.Router();
+router.get('/testing', (req, res) => {
+    res.send('<h1>Testing is working</h1>')
+  })//http://localhost:4000/api/testing req=request res=response
+
+  app.use('/api',router);//http://localhost:4000/api
+
+//==step-9== for take data based on id in document call back fun here we use promise(pipline process)
+router.get('/projects', (req, res) => {
+
+	Project.find()
+	.then((projects) => {
+	    return res.json(projects);
+	});
+
+})
+
+//===step3==
+// launch our backend into a port (to start servet)
+const apiPort = 4000;//you can change port number anything 3000,3001,4000,4001 etc
+app.listen(apiPort, () => console.log('Listening on port '+apiPort));
+
+//===step4==
+//start server use this command (node server) in command prompt
+// http://localhost:4000/ this in browser
+// control + c to stop and change and update in file if you use (node server)
+//so use (npx nodemon server) which is automatic change
