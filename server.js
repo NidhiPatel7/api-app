@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cors = require('cors');
 
 var Project = require('./project-model');
+var Type = require('./type-model');
 
 //setup database connection
 var connectionString = 'mongodb://apiuser:api1234@cluster0-shard-00-00-yyqmt.mongodb.net:27017,cluster0-shard-00-01-yyqmt.mongodb.net:27017,cluster0-shard-00-02-yyqmt.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority';
@@ -87,7 +88,15 @@ router.put('/projects/:id', (req, res) => {
 	});	
 
 });
+router.get('/types', (req, res) => {
 
+	Type.find()
+	.then((types) => {
+	    return res.json(types);
+	});
+
+	// return res.json('hi');
+})
 app.use('/api', router);
 
 // launch our backend into a port
