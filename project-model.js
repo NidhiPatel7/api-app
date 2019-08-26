@@ -7,7 +7,7 @@ var ProjectSchema = new Schema(
     id: Number,
     name: String,
     description: String,
-    // photo:String,
+    photo:String,
     type_id:Number,
   },
   { timestamps: true }

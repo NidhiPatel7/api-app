@@ -1,8 +1,11 @@
+// express fileupload plugin for upload file https://www.npmjs.com/package/express-fileupload
+
 var mongoose = require('mongoose');
 var express = require('express');
 var bodyParser = require('body-parser');
 var logger = require('morgan');
 var cors = require('cors');
+var fileupload = require('express-fileupload');//after upload plugin use add this
 
 var Project = require('./project-model');
 var Type = require('./type-model');
@@ -23,7 +26,9 @@ app.use(cors());//connect to diffrent domain
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(logger('dev'));
+app.use(fileupload());//after upload file pluging install use this
 
+app.use(express.static('public'));//acess photos or everythings from public folder http://localhost:4000/painting.jpg
 //setup routes
 var router = express.Router();
 
@@ -97,6 +102,27 @@ router.get('/types', (req, res) => {
 
 	// return res.json('hi');
 })
+
+// for upload
+router.post('/upload', (req, res) => {
+
+// return res.json("upload");//check in postman
+//return res.json(req.files);//check postman
+var files = Object.values(req.files);//turn key and value (json) list in index list (array )
+var uploadedFile = files[0];//this is for upload only one file we ignor other
+//console.log(uploadFile);//able to view in terminol and mv:[function:mv] is imp which allow us to move the file
+// its like ram 
+var newName = Date.now()+uploadedFile.name;//for unique name there is plugin for diffrent number as well
+uploadedFile.mv('public/'+newName, function(){
+	// mv is fun to move file one to other public/ in which folder we want to save photo
+	//res.json('bla.jpg uploaded');//response we get in postman
+	res.send(newName);
+}) 
+
+
+});
+
+// for api check
 app.use('/api', router);
 
 // launch our backend into a port
